@@ -12,6 +12,7 @@ export const validate = (schema) => {
       let explanation = [];
       let errormessage = '';
       console.log('value', error.message);
+      console.log('received', error.received);
 
       error.errors.forEach((keys) => {
         explanation.push(keys.path[0] + ':' + keys.message);

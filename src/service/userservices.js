@@ -58,7 +58,7 @@ export const signinservice = async function (data) {
       avatar: user.avatar,
       email: user.email,
       _id: user._id,
-      token: createtoken({ email: user.email, password: user.password })
+      token: createtoken({ id: user._id, email: user.email })
     };
   } catch (error) {
     console.log('Signin service', error);
