@@ -8,6 +8,13 @@ import crudrepositories from './crudrepositories.js';
 
 const workspacerepositories = {
   ...crudrepositories(Workspace),
+  getworkspacedetailsbyid: async function (workspaceid) {
+    const response = await Workspace.findById(workspaceid)
+      .populate('member.memberId', 'username email avatar')
+      .populate('channels');
+
+    return response;
+  },
   getworkspacebyname: async function (workspacename) {
     const workspace = await Workspace.findOne({ name: workspacename });
     if (!workspace) {
@@ -20,7 +27,8 @@ const workspacerepositories = {
     return workspace;
   },
   getworkspacebyjoincode: async function (joincode) {
-    const workspace = await Workspace.findOne(joincode);
+    const workspace = await Workspace.findOne({ joincode });
+    console.log('repos of fetching data from repos', workspace);
     if (!workspace) {
       throw new ClientError({
         explanation: 'Invalid workspace send from clinet side',
@@ -58,7 +66,7 @@ const workspacerepositories = {
       (member) => member.memberId == memberId
     );
 
-    console.log('ismember', isMemberAlreadyPartOfWorkspace);
+    // console.log('ismember', isMemberAlreadyPartOfWorkspace);
     if (isMemberAlreadyPartOfWorkspace) {
       throw new ClientError({
         explanation: 'Invalid workspace sent from clinet',

@@ -16,11 +16,19 @@ export default function crudrepositories(model) {
       const response = await model.findByIdAndDelete(id);
       return response;
     },
-    update: async function (data, id) {
+    update: async function (id, data) {
       const updateDoc = await model.findByIdAndUpdate(id, data, {
         new: true
       });
       return updateDoc;
+    },
+    deletemany: async function (modelIds) {
+      const response = await model.deleteMany({
+        _id: {
+          $in: modelIds
+        }
+      });
+      return response;
     }
   };
 }
@@ -38,6 +46,4 @@ export default function crudrepositories(model) {
 
 // export default new repositories();
 
-
 //going with function creating a inhertance just create object
-
