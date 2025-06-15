@@ -10,11 +10,13 @@ import ValidationError from '../utils/errors/validationerror.js';
 
 const isvalidmemberandadmin = (workspace, userid) => {
   return workspace.member.find(
-    (member) => member.memberId.toString() === userid && member.role === 'admin'
+    (member) =>
+      (member.memberId.toString() === userid || member._id.toString()) &&
+      member.role === 'admin'
   );
 };
 
-const ismemeberworkspace = (workspace, userid) => {
+export const ismemeberworkspace = (workspace, userid) => {
   return workspace.member.find(
     (member) => member.memberId.toString() === userid
   );
@@ -193,7 +195,8 @@ export const updateworkspaceservice = async function (
 export const addmemebertoworkspaceservice = async function (
   workspaceid,
   memberid,
-  role
+  role,
+  userid
 ) {
   try {
     const workspace = await workspacerepositories.getById(workspaceid);
@@ -210,6 +213,14 @@ export const addmemebertoworkspaceservice = async function (
         explanation: 'Invalid data sent from the client',
         message: 'User not found',
         statusCode: StatusCodes.NOT_FOUND
+      });
+    }
+    const isadmin = isvalidmemberandadmin(workspace, userid);
+    if (!isadmin) {
+      throw new ClientError({
+        message: 'Is not admin to add channel',
+        explanation: 'Invalid data is sent from clinet',
+        statusCode: StatusCodes.UNAUTHORIZED
       });
     }
     const ismember = ismemeberworkspace(workspace, memberid);
@@ -234,7 +245,8 @@ export const addmemebertoworkspaceservice = async function (
 
 export const addchanneltoworkspaceservice = async function (
   workspaceid,
-  channelname
+  channelname,
+  userid
 ) {
   try {
     const workspace =
@@ -247,10 +259,18 @@ export const addchanneltoworkspaceservice = async function (
         statusCode: StatusCodes.NOT_FOUND
       });
     }
-    const ischannel = ischannelAlreadyPartofworkspace(workspace, channelname);
-    if (!ischannel) {
+    const isadmin = isvalidmemberandadmin(workspace, userid);
+    if (!isadmin) {
       throw new ClientError({
-        message: 'workspace is invalid',
+        message: 'Is not admin to add channel',
+        explanation: 'Invalid data is sent from clinet',
+        statusCode: StatusCodes.UNAUTHORIZED
+      });
+    }
+    const ischannel = ischannelAlreadyPartofworkspace(workspace, channelname);
+    if (ischannel) {
+      throw new ClientError({
+        message: 'channel is already exist',
         explanation: 'Invalid data is sent from client',
         statusCode: StatusCodes.UNAUTHORIZED
       });

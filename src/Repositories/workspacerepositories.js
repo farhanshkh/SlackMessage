@@ -12,7 +12,7 @@ const workspacerepositories = {
     const response = await Workspace.findById(workspaceid)
       .populate('member.memberId', 'username email avatar')
       .populate('channels');
-
+    console.log(response);
     return response;
   },
   getworkspacebyname: async function (workspacename) {
@@ -88,6 +88,7 @@ const workspacerepositories = {
   addchanneltoworkspace: async function (workspaceId, channelname) {
     const workspace =
       await Workspace.findById(workspaceId).populate('channels');
+    console.log(workspace);
     if (!workspace) {
       throw new ClientError({
         explanation: 'Invalid workspace sent from clinet',
@@ -96,7 +97,7 @@ const workspacerepositories = {
       });
     }
     const isChannelAlreadyPartofWorkSpace = workspace.channels.find(
-      (channel) => channel === channelname
+      (channel) => channel.name === channelname
     );
 
     console.log(
@@ -112,7 +113,8 @@ const workspacerepositories = {
       });
     }
     const creatchannel = await channelrepositories.create({
-      name: channelname
+      name: channelname,
+      workspaceid: workspaceId
     });
 
     workspace.channels.push(creatchannel);

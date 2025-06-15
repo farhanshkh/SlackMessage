@@ -1,6 +1,7 @@
 import express from 'express';
 
 import {
+  addchanneltoworkspacecontroller,
   addmemebertoworkspacecontroller,
   deleteworkspacecontroller,
   getworksapcecontroller,
@@ -10,7 +11,11 @@ import {
   workspacecreatecontroller
 } from '../../controller/workspacecontroller.js';
 import { IsAuthenticate } from '../../middleware/Authmiddleware.js';
-import { workspaceschema } from '../../validation/workspaceschema.js';
+import {
+  addchannelshema,
+  addmemberschema,
+  workspaceschema
+} from '../../validation/workspaceschema.js';
 import { validate } from '../../validation/zodvalidation.js';
 
 const router = express.Router();
@@ -30,7 +35,14 @@ router.put('/:workspaceId', IsAuthenticate, updateworkspacecontroller);
 router.put(
   '/:workspaceid/member',
   IsAuthenticate,
+  validate(addmemberschema),
   addmemebertoworkspacecontroller
+);
+router.put(
+  '/:workspaceid/channel',
+  IsAuthenticate,
+  validate(addchannelshema),
+  addchanneltoworkspacecontroller
 );
 
 export default router;

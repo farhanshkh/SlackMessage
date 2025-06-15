@@ -34,6 +34,6 @@ const workspaceschema = new mongoose.Schema({
   ]
 });
 
-const Workspace = mongoose.model('workspace', workspaceschema);
+const Workspace = mongoose.model('Workspace', workspaceschema);
 
 export default Workspace;
